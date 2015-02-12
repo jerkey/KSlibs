@@ -91,18 +91,18 @@ static void do_temp(int start) {
 	n = start;
 	
 	Disp_RC(0, 0);
-	sprintf(buf, "T%02d   %3ld  ", n, Temp_Data[n]);
+	sprintf(buf, "T%02d  %4ld  ", n, Temp_Data[n]);
 	Disp_PutStr(buf);
 	n++;
-	sprintf(buf, "T%02d   %3ld", n, Temp_Data[n]);
+	sprintf(buf, "T%02d  %4ld", n, Temp_Data[n]);
 	Disp_PutStr(buf);
 	
 	Disp_RC(1, 0);
 	n++;
-	sprintf(buf, "T%02d   %3ld  ", n, Temp_Data[n]);
+	sprintf(buf, "T%02d  %4ld  ", n, Temp_Data[n]);
 	Disp_PutStr(buf);
 	n++;
-	sprintf(buf, "T%02d   %3ld", n, Temp_Data[n]);
+	sprintf(buf, "T%02d  %4ld", n, Temp_Data[n]);
 	Disp_PutStr(buf);
 	
 	
@@ -111,10 +111,10 @@ static void do_temp(int start) {
 		Disp_PutStr("                    ");
 	} else {
 		n++;
-		sprintf(buf, "T%02d   %3ld  ", n, Temp_Data[n]);
+		sprintf(buf, "T%02d  %4ld  ", n, Temp_Data[n]);
 		Disp_PutStr(buf);
 		n++;
-		sprintf(buf, "T%02d   %3ld", n, Temp_Data[n]);
+		sprintf(buf, "T%02d  %4ld", n, Temp_Data[n]);
 		Disp_PutStr(buf);
 	}
 		
