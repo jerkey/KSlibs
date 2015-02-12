@@ -36,9 +36,9 @@ void UI_NextScr() {
 		}
 		break;
 	case SCR_TEMP1:
-		scr = SCR_TEMP2;
-		break;
-	case SCR_TEMP2:
+//		scr = SCR_TEMP2;
+//		break;
+//	case SCR_TEMP2:
 		scr = SCR_PRESS;
 		break;
 	case SCR_PRESS:
@@ -105,21 +105,22 @@ static void do_temp(int start) {
 	sprintf(buf, "T%02d  %4ld", n, Temp_Data[n]);
 	Disp_PutStr(buf);
 	
-	
 	Disp_RC(2, 0);
-	if (start==12 | GCU_fill == LITEFILL) { //third screen
-		Disp_PutStr("                    ");
-	} else {
-		n++;
-		sprintf(buf, "T%02d  %4ld  ", n, Temp_Data[n]);
-		Disp_PutStr(buf);
-		n++;
-		sprintf(buf, "T%02d  %4ld", n, Temp_Data[n]);
-		Disp_PutStr(buf);
-	}
-		
+	n++;
+	sprintf(buf, "T%02d  %4ld  ", n, Temp_Data[n]);
+	Disp_PutStr(buf);
+	n++;
+	sprintf(buf, "T%02d  %4ld", n, Temp_Data[n]);
+	Disp_PutStr(buf);
+	
 	Disp_RC(3, 0);
-	Disp_PutStr("NEXT   [degC]   HELP");
+	n++;
+	sprintf(buf, "T%02d  %4ld  ", n, Temp_Data[n]);
+	Disp_PutStr(buf);
+	n++;
+	sprintf(buf, "T%02d  %4ld", n, Temp_Data[n]);
+	Disp_PutStr(buf);
+
 	Disp_CursOff();
 }
 
@@ -288,7 +289,7 @@ void UI_DoScr() {
 		do_temp(0);
 		break;
 	case SCR_TEMP1:
-		do_temp(6);
+		do_temp(8);
 		break;	
 	case SCR_TEMP2:
 		do_temp(12);
