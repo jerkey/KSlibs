@@ -23,7 +23,7 @@ extern int ANA_available[8];
 #define ADC_MAXCOUNT (1024l)
 
 // in microvolts
-#define ADC_REF_V (5000000l)
+#define ADC_REF_V (1100000l)
 
 // set MUXA / MUXB pins to correct bank
 #define ADC_SETBANK(n) {PORTL = (PORTL & ~0xc0) | ((n) << 6);}
