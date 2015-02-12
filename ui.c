@@ -5,7 +5,7 @@
 #include "temp.h"
 #include "pressure.h"
 #include "fet.h"
-#include "servo.h"
+#include "servos.h"
 #include "timer.h"
 #include "util.h"
 
@@ -24,13 +24,32 @@ int temp_start = 0;
 
 
 void UI_NextScr() {
-	scr++;
-	if (scr == SCR_TEMP1 && GCU_fill == 1) { // skip unused temp sensor menus
+	switch (scr) {
+	case SCR_HELLO:
+		scr = SCR_TEMP0;
+		break;
+	case SCR_TEMP0:
+		if (GCU_fill  == LITEFILL | GCU_fill  == HALFFILL) {
+		  scr = SCR_PRESS;
+		} else {
+		  scr = SCR_TEMP1;
+		}
+		break;
+	case SCR_TEMP1:
+		scr = SCR_TEMP2;
+		break;
+	case SCR_TEMP2:
 		scr = SCR_PRESS;
-	}
-	if (scr > NSCR) {
-		scr = SCR_HELLO;
-	}	
+		break;
+	case SCR_PRESS:
+		scr = SCR_FETS;
+		break;
+	case SCR_FETS:
+		scr = SCR_HELLO; //skip servo screens (not implemented)
+		break;
+    case SCR_SERVOS:
+    	break;
+    }
 }
 
 
@@ -44,7 +63,7 @@ void do_hello() {
 	Disp_RC(1,0);
 	Disp_PutStr("www.allpowerlabs.org");
 	Disp_RC(2,0);
-	Disp_PutStr("    (C) APL 2009    ");
+	Disp_PutStr("    (C) APL 2011    ");
 	Disp_RC(3,0);
 	Disp_PutStr("NEXT            HELP");
 	Disp_CursOff();
@@ -88,7 +107,7 @@ static void do_temp(int start) {
 	
 	
 	Disp_RC(2, 0);
-	if (start==12) { //third screen
+	if (start==12 | GCU_fill == LITEFILL) { //third screen
 		Disp_PutStr("                    ");
 	} else {
 		n++;

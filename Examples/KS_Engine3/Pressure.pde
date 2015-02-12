@@ -1,8 +1,7 @@
 // Pressure
 
 void DoPressure() {
-  P_reactor = Press[0];
-  P_comb = Press[4];
+  UpdateCalibratedPressure();
   //P_comb_smooth = smooth(P_comb,0.999,P_comb_smooth);
 }
 
@@ -10,7 +9,7 @@ void CalibratePressureSensors() {
   int P_sum[6] = {0,0,0,0};
   int P_ave;
   byte lowbyte,highbyte;
-  Serial.println("Calibrating Pressure Sensors");
+  Serial.println("#Calibrating Pressure Sensors");
   for (int i=0; i<10; i++) {
     Press_ReadAll();
     for (int j=0; j<6; j++) {
@@ -31,12 +30,12 @@ void CalibratePressureSensors() {
 void LoadPressureSensorCalibration() {
   int calib;
   byte lowbyte,highbyte;
-  Serial.println("Loading Pressure Sensor Calibrations:");
+  Serial.println("#Loading Pressure Sensor Calibrations:");
   for (int i=0; i<6; i++) {
     byte lowByte = EEPROM.read(i*2);
     byte highByte = EEPROM.read(i*2 + 1);
     Press_Calib[i] = ((lowByte << 0) & 0xFF) + ((highByte << 8) & 0xFF00);
-    Serial.print("P");
+    Serial.print("#P");
     Serial.print(i);
     Serial.print(": ");
     Serial.print(Press_Calib[i]);

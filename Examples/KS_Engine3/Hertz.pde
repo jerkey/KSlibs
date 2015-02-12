@@ -1,11 +1,23 @@
-//Timer Code (Hertz Measurement)
-void DoHertz() {
-  hertz = int(Timer2_Read());
-  Timer2_Reset();
+//
+void InitPeriodHertz() {
+  attachInterrupt(INT_HERTZ,DoPeriodHertz,RISING); //Interrupt #5 - Arduino Pin 18 = PD5
 }
 
-//Timer
-void Timer2_Init() {
+void DoPeriodHertz() {
+  hertz_period = micros() - hertz_last_interrupt;
+  hertz_last_interrupt = micros();
+}
+
+double CalculatePeriodHertz() {
+    if (micros() - hertz_last_interrupt < 500000) { // if period is longer than 500k µs, Hz is less than 2 Hz or getting no signal
+      return 1.0/(hertz_period/1000000.0); //frequency = 1/period in seconds (hertz_period is in microseconds)
+    } else {
+      return 0;  // less than 2 Hz or no signal, so print 0
+    }
+}
+
+//CounterHertz - Using hardware counter
+void InitCounterHertz() {
   unsigned long time;
   // assumptions:
   //  TC2 is in mode 0 ("normal mode")  (this is true at processor reset)
@@ -31,12 +43,7 @@ void Timer2_Init() {
   TIFR2 = 0x00;
 }
 
-void Timer2_Reset() {
+void DoCounterHertz() {
+  counter_hertz = int(TCNT2);
   TCNT2 = 0x00;
-  // while (ASSR & 0x10) ;    // see warning above
-  //while (ASSR & 0x1f & microseconds()-time < 1000);
-}
-
-unsigned char Timer2_Read() {
-  return TCNT2;
 }

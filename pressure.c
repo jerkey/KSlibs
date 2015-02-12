@@ -77,7 +77,7 @@ void Press_Init() {
 				sensitivity[4] = 1000;
 				sensitivity[5] = 1000;
 		  	}
-			if (GCU_fill == HALFFILL) {
+			if (GCU_fill == HALFFILL || GCU_fill == LITEFILL) {
 				if (GCU_psequence == P777722) {
 					Press_Available[0] = 1;
 					Press_Available[1] = 0;

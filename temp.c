@@ -28,14 +28,30 @@ void Temp_Init() {
 		Temp_Data[i] = 0;
 		Temp_Available[0] = 0;
 	}
-	n_temp = 6;
-	Temp_Available[0] = 1;
-	Temp_Available[1] = 1;
-	Temp_Available[2] = 1;
-	Temp_Available[3] = 1;
-	Temp_Available[5] = 1;
-	if (GCU_fill != 1) {
+	if (GCU_fill == LITEFILL) {
+		n_temp = 4;
+		Temp_Available[0] = 1;
+		Temp_Available[1] = 1;
+		Temp_Available[2] = 1;
+		Temp_Available[3] = 1;
+	}
+    if (GCU_fill == HALFFILL) {
+		n_temp = 6;
+		Temp_Available[0] = 1;
+		Temp_Available[1] = 1;
+		Temp_Available[2] = 1;
+		Temp_Available[3] = 1;
+		Temp_Available[4] = 1;
+		Temp_Available[5] = 1;
+	}
+	if (GCU_fill == FULLFILL) {
 		n_temp = 16;
+	    Temp_Available[0] = 1;
+		Temp_Available[1] = 1;
+		Temp_Available[2] = 1;
+		Temp_Available[3] = 1;
+		Temp_Available[4] = 1;
+		Temp_Available[5] = 1;
 		Temp_Available[6] = 1;
 		Temp_Available[7] = 1;
 		Temp_Available[8] = 1;

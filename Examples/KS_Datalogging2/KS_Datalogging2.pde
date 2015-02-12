@@ -3,7 +3,7 @@
 #include <fet.h>
 #include <keypad.h>
 #include <pressure.h>
-#include <servo.h>
+#include <servos.h>
 #include <temp.h>
 #include <timer.h>
 #include <ui.h>
@@ -12,7 +12,7 @@
 // Datalogging variables
 unsigned int samplePeriod = 1000; // length of time between samples (call to loop())
 long unsigned int nextTime = 0;
-boolean augerOn;
+int lines = 0;
 
 void setup() {
   // timer initialization
@@ -21,7 +21,7 @@ void setup() {
   delay(1);
   //Specify GCU: (version,fill,psequence)
   //version = V2 or V3 / 2.0 or 3.0
-  //fill = HALFFILL or FULLFILL / half or full
+  //fill = FULLFILL | HALFFILL | LITEFILL / full, half, or lite fill boards
   //psequence: for V3.01 boards, check sequence of P sensor part numbers (e.g. MXP7007 or MXP7002, and use last digit). V3.02 boards use P777722:
   // P777222, P222777, P777722
   GCU_Setup(V3,FULLFILL,P777722);
@@ -46,15 +46,6 @@ void setup() {
   Timer_Reset();
 
   Serial.begin(115200);
-  if (GCU_version == V2 & GCU_fill == HALFFILL) {
-    Serial.println("Time,T0,T1,T2,T3,T4,T5,P0,P2,ANA0,ANA1,ANA2,ANA3");
-  } else if (GCU_version == V2 & GCU_fill == FULLFILL)  {
-    Serial.println("Time,T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,P0,P1,P2,P3,ANA0,ANA1,ANA2,ANA3");
-  } else if (GCU_version == V3 & GCU_fill == HALFFILL)  {
-    Serial.println("Time,T0,T1,T2,T3,T4,T5,P0,P3,ANA0,ANA1,ANA2,ANA3");
-  } else if (GCU_version == V3 & GCU_fill == FULLFILL)  {
-    Serial.println("Time,T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,P0,P1,P2,P3,P4,P5,ANA0,ANA1,ANA2,ANA3");
-  }
 }
 
 void loop() {
@@ -91,64 +82,101 @@ void loop() {
   delay(10);
 }
 
-void DoDatalogging() {
-    // Serial output for datalogging
-    Serial.print(millis()/1000); // time since reset in seconds
-    Serial.print(", ");
-    Serial.print(Temp_Data[0]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[1]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[2]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[3]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[4]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[5]);
-    Serial.print(", ");
-    if (GCU_fill == 2) {
-    Serial.print(Temp_Data[6]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[7]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[8]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[9]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[10]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[11]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[12]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[13]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[14]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[15]);
-    Serial.print(", ");
-    }
-    for (int i= 0; i<6; i++) {
-      if (Press_Available[i]) {
-        Serial.print(Press_Data[i]);
-        Serial.print(", ");
+void LogTempInputs(boolean header = false) {
+  if (header) {
+      for (int i= 0; i<16; i++) {
+        if (Temp_Available[i]) {
+          PrintColumnHeader("T",i);
+        }
+      }
+  } else {
+    for (int i= 0; i<16; i++) {
+      if (Temp_Available[i]) {
+        PrintColumnInt(Temp_Data[i]);
       }
     }
-    Serial.print(ADC_ReadChanSync(0));
-    Serial.print(", ");  
-    Serial.print(ADC_ReadChanSync(1));
-    Serial.print(", ");
-    Serial.print(ADC_ReadChanSync(2));
-    Serial.print(", ");
-    Serial.print(ADC_ReadChanSync(3));
-    Serial.print(", ");
-    if (augerOn) {
-      Serial.print("augerOn");
-    } else {
-      Serial.print("augerOff");
+  }
+}
+
+void LogPressureInputs(boolean header = false) {
+  if (header) {
+      for (int i= 0; i<6; i++) {
+        if (Press_Available[i]) {
+          PrintColumnHeader("P",i);
+        }
+      }
+  } else {
+    for (int i= 0; i<6; i++) {
+      if (Press_Available[i]) {
+        PrintColumnInt(Press_Data[i]);
+      }
     }
-    Serial.print("\r\n"); // end of line
+  }
+}
+
+void LogAnalogInputs(boolean header = false) {
+  if (header) {
+    for (int i= 0; i<8; i++) {
+      if (ANA_available[i] == 1) {
+        PrintColumnHeader("ANA",i);
+      }
+    }
+  } else {
+    if (ANA_available[0] == 1) {
+      PrintColumnInt(analogRead(ANA0));
+    }
+    if (ANA_available[1] == 1) {
+      PrintColumnInt(analogRead(ANA1));
+    }
+    if (ANA_available[2] == 1) {
+      PrintColumnInt(analogRead(ANA2));
+    }
+    if (ANA_available[3] == 1) {
+      PrintColumnInt(analogRead(ANA3));
+    }
+    if (ANA_available[4] == 1) {
+      PrintColumnInt(analogRead(ANA4));
+    }
+    if (ANA_available[5] == 1) {
+      PrintColumnInt(analogRead(ANA5));
+    }
+    if (ANA_available[6] == 1) {
+      PrintColumnInt(analogRead(ANA6));
+    }
+    if (ANA_available[7] == 1) {
+      PrintColumnInt(analogRead(ANA7));
+    }
+  }
+}
+
+void LogTime(boolean header = false) {
+  if (header) {
+    PrintColumn("Time");
+  } else {
+    PrintColumnInt(millis()/100.0); // time since restart in deciseconds
+  }
+}
+
+
+void PrintColumnHeader(String str,int n) {
+   Serial.print(str);
+   Serial.print(n);
+   Serial.print(", ");  
+}
+
+void PrintColumn(float str) {
+   Serial.print(str);
+   Serial.print(", ");  
+}
+
+void PrintColumn(String str) {
+   Serial.print(str);
+   Serial.print(", "); 
+} 
+
+void PrintColumnInt(int str) {
+   Serial.print(str);
+   Serial.print(", ");  
 }
 
 void DoHeartBeatLED() {
@@ -156,18 +184,18 @@ void DoHeartBeatLED() {
   PORTJ |= 0x80;
 }
 
-void DoBEKAuger() {
-  int AveBiomassTemp;
-  AveBiomassTemp = (Temp[1] + Temp[2])/2;
-  if (AveBiomassTemp > 405) {
-    augerOn = true;
-  }
-  if (AveBiomassTemp < 395 & augerOn == true) {
-    augerOn = false;
-  }
-  if (augerOn) {
-    digitalWrite(FET0,HIGH);
-  } else {
-    digitalWrite(FET0,LOW);
-  }
+void DoDatalogging() {
+    boolean header;
+    if (lines == 0) {
+      header = true;
+    } else {
+      header = false;
+    }
+    // Serial output for datalogging
+    LogTime(header);
+    LogTempInputs(header);
+    LogPressureInputs(header);
+    LogAnalogInputs(header);
+    Serial.print("\r\n"); // end of line
+    lines++;
 }
