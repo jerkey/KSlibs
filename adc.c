@@ -9,7 +9,10 @@ void ADC_Init() {
 	DDRL |= 0xc0;    // MUXA and MUXB are outputs
 	PORTL = (PORTL & ~0xc0) | (0 << 6);  // bank number for external MUX
 	
-	ADMUX = 0x40;    // AVCC is AREF   
+      //ADMUX bits REFS1   REFS0     ADLAR      MUX4     MUX3     MUX2     MUX1     MUX0
+      //REF 00 = external AREF,  01 = AVCC, 10 = internal 1.1v, 11 = internal 2.56v
+	ADMUX = 0x40;    // AVCC is AREF
+        // the above is overwritten by analogReference() even if you don't set it!!
 	ADCSRA |= 0x80;  // enable ADC
 	ADCSRA |= 0x07;  // prescale by 128
 
