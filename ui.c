@@ -5,6 +5,7 @@
 #include "temp.h"
 #include "pressure.h"
 #include "fet.h"
+#include "adc.h"
 #include "servos.h"
 #include "timer.h"
 #include "util.h"
@@ -16,7 +17,7 @@ int temp_start = 0;
 #define SCR_HELLO 0
 #define SCR_TEMP0 1
 #define SCR_TEMP1 2
-#define SCR_TEMP2 3
+#define SCR_ANAL0 3
 #define SCR_PRESS 4
 #define SCR_FETS 5
 #define SCR_SERVOS 6
@@ -36,9 +37,9 @@ void UI_NextScr() {
 		}
 		break;
 	case SCR_TEMP1:
-//		scr = SCR_TEMP2;
-//		break;
-//	case SCR_TEMP2:
+		scr = SCR_ANAL0;
+		break;
+	case SCR_ANAL0:
 		scr = SCR_PRESS;
 		break;
 	case SCR_PRESS:
@@ -119,6 +120,44 @@ static void do_temp(int start) {
 	Disp_PutStr(buf);
 	n++;
 	sprintf(buf, "T%02d  %4ld", n, Temp_Data[n]);
+	Disp_PutStr(buf);
+
+	Disp_CursOff();
+}
+
+static void do_analogs() {
+	char buf[20];
+	int n = 0;
+	
+	Disp_RC(0, 0);
+	sprintf(buf, "A%02d  %4hd  ", n, analogRead(ANA0 + n));
+	Disp_PutStr(buf);
+	n++;
+	sprintf(buf, "A%02d  %4hd", n, analogRead(ANA0 + n));
+	Disp_PutStr(buf);
+	
+	Disp_RC(1, 0);
+	n++;
+	sprintf(buf, "A%02d  %4hd  ", n, analogRead(ANA0 + n));
+	Disp_PutStr(buf);
+	n++;
+	sprintf(buf, "A%02d  %4hd", n, analogRead(ANA0 + n));
+	Disp_PutStr(buf);
+	
+	Disp_RC(2, 0);
+	n++;
+	sprintf(buf, "A%02d  %4hd  ", n, analogRead(ANA0 + n));
+	Disp_PutStr(buf);
+	n++;
+	sprintf(buf, "A%02d  %4hd", n, analogRead(ANA0 + n));
+	Disp_PutStr(buf);
+	
+	Disp_RC(3, 0);
+	n++;
+	sprintf(buf, "A%02d  %4hd  ", n, analogRead(ANA0 + n));
+	Disp_PutStr(buf);
+	n++;
+	sprintf(buf, "A%02d  %4hd", n, analogRead(ANA0 + n));
 	Disp_PutStr(buf);
 
 	Disp_CursOff();
@@ -291,8 +330,8 @@ void UI_DoScr() {
 	case SCR_TEMP1:
 		do_temp(8);
 		break;	
-	case SCR_TEMP2:
-		do_temp(12);
+	case SCR_ANAL0:
+		do_analogs();
 		break;
 	case SCR_PRESS:
 		do_press();
