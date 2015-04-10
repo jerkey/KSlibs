@@ -2,7 +2,7 @@
 
 #include "display.h"
 
-#include <wiring.h>
+// #include <wiring.h>
 #define DelayMS(n) delay(n)
 
 
