@@ -3,6 +3,7 @@ extern "C" {
 #endif
 
 #define NFETS (8)
+// byte mosfets[8] = {5,2,3,6,7,8,46,45};
 
 #define FET0 5 //Arduino pin 5 = FET 0
 #define FET1 2 //Arduino pin 2 = FET 1
