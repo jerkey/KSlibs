@@ -12,15 +12,16 @@ int n_temp;
 #define COLDTEMP (25)
 
 // uV / deg C
-#define SENSITIVITY (43ul) // (41ul) for type K, (43ul) for type T
+#define SENSITIVITY (41ul) // (41ul) for type K, (43ul) for type T
 
 // voltage gain of differential amp stage
 #define GAIN (100ul)
 
-#define COMPENSATE(x) ((((x) * (ADC_REF_V / (GAIN * SENSITIVITY))) / ADC_MAXCOUNT) + COLDTEMP)
+// #define COMPENSATE(x) ((((x) * (ADC_REF_V / (GAIN * SENSITIVITY))) / ADC_MAXCOUNT) + COLDTEMP)
+#define COMPENSATE(x) ((((x) * (3981000l / (100ul * 41ul))) / 1024l) + 25)
 
 unsigned long Temp_Data[16];
-unsigned int Temp_Corrections[16] = { 10000,10000,10000,10000,10000,10000,10000,10000,10023,9975,9987,10057,10010,10112,9932,9906};
+// unsigned int Temp_Corrections[16] = { 10000,10000,10000,10000,10000,10000,10000,10000,10023,9975,9987,10057,10010,10112,9932,9906};
 int Temp_Available[16];
 
 void Temp_Init() {
@@ -80,6 +81,7 @@ void Temp_ReadAll() {
 		for (chan=0; chan<4; chan++) {
                         adder = 0;
                         for (i=0; i<10; i++) {
+                                 // adder += COMPENSATE(ADC_ReadChanSync(8 + chan));
                                  adder += ADC_ReadChanSync(8 + chan); // Temp_Data[4*chan + bank] += COMPENSATE(ADC_ReadChanSync(8 + chan));
                         }
                         //Temp_Data[4*chan + bank] = (adder * Temp_Corrections[4*chan + bank]) / 10000;
