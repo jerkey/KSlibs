@@ -11,7 +11,7 @@ void ADC_Init() {
 	
       //ADMUX bits REFS1   REFS0     ADLAR      MUX4     MUX3     MUX2     MUX1     MUX0
       //REF 00 = external AREF,  01 = AVCC, 10 = internal 1.1v, 11 = internal 2.56v
-	ADMUX = 0x00;    // 0x40 = AVCC is AREF
+	ADMUX = 0x40;    // 0x40 = AVCC is AREF
         // the above is SOMETIMES overwritten by default analogReference() even if you don't set it!!
 	ADCSRA |= 0x80;  // enable ADC
 	ADCSRA |= 0x07;  // prescale by 128
