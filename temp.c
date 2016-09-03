@@ -18,10 +18,10 @@ int n_temp;
 #define GAIN (100ul)
 
 // #define COMPENSATE(x) ((((x) * (ADC_REF_V / (GAIN * SENSITIVITY))) / ADC_MAXCOUNT) + COLDTEMP)
-#define COMPENSATE(x) ((((x) * (5000000l / (100ul * 41ul))) / 1024l) + 25)
+#define COMPENSATE(x) ((((x) * (3981000l / (100ul * 41ul))) / 1024l) + 25)
 
 unsigned long Temp_Data[16];
-unsigned int Temp_Corrections[16] = { 10000,10000,10000,10000,10000,10000,10000,10000,10023,9975,9987,10057,10010,10112,9932,9906};
+// unsigned int Temp_Corrections[16] = { 10000,10000,10000,10000,10000,10000,10000,10000,10023,9975,9987,10057,10010,10112,9932,9906};
 int Temp_Available[16];
 
 void Temp_Init() {
